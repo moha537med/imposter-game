@@ -1,0 +1,104 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Cairo", sans-serif;
+}
+
+body {
+    height: 100vh;
+    background: linear-gradient(135deg, #1f1c2c, #928dab);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    padding: 40px;
+    border-radius: 20px;
+    width: 400px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+    animation: fadeIn 0.6s ease-in-out;
+}
+
+h2 {
+    margin-bottom: 20px;
+    font-size: 28px;
+    font-weight: 900;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    font-size: 16px;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(45deg, #ff416c, #ff4b2b);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-bottom: 10px;
+}
+
+button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(255,75,43,0.6);
+}
+
+#roomIdDisplay {
+    margin-bottom: 15px;
+    font-weight: bold;
+    font-size: 18px;
+    color: #ffd700;
+}
+
+#players {
+    margin-bottom: 20px;
+}
+
+#roleText {
+    font-size: 26px;
+    font-weight: 900;
+    animation: pop 0.5s ease;
+}
+
+.imposter {
+    color: #ff4b2b;
+    text-shadow: 0 0 20px #ff0000;
+}
+
+.normal {
+    color: #00ffcc;
+    text-shadow: 0 0 20px #00ffff;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(20px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+@keyframes pop {
+    from {transform: scale(0.7); opacity: 0;}
+    to {transform: scale(1); opacity: 1;}
+}
+
+.divider {
+    margin: 20px 0;
+    height: 1px;
+    background: rgba(255,255,255,0.3);
+}

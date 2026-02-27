@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+  <title>Imposter Game</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+
+    <div id="setup">
+        <h2>Imposter Game</h2>
+        <input id="name" placeholder="اسمك"><br>
+        <select id="category">
+            <option>أكلات</option>
+            <option>وظائف</option>
+            <option>افلام مصرية</option>
+            <option>حيوانات</option>
+        </select><br>
+        <button onclick="createRoom()">إنشاء غرفة</button><br><br>
+        <input id="roomIdInput" placeholder="Room ID"><br>
+        <button onclick="joinRoom()">دخول غرفة</button>
+    </div>
+
+    <div id="room" style="display:none;">
+        <h3 id="roomIdDisplay"></h3>
+        <h4>اللاعبين:</h4>
+        <div id="players"></div>
+
+        <div id="controls">
+        <button id="startBtn" onclick="startGame()">ابدأ اللعبة</button>
+        <button onclick="resetGame()">جولة جديدة</button>
+    </div>
+
+<h3 id="phaseText"></h3>
+</div>
+
+<div id="role" style="display:none;">
+<h2 id="roleText"></h2>
+</div>
+
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket = io();
+let currentRoom=null;
+let isHost=false;
+
+function createRoom(){
+  const name=document.getElementById("name").value;
+  const category=document.getElementById("category").value;
+  socket.emit("createRoom",{name,category});
+}
+
+function joinRoom(){
+  const name=document.getElementById("name").value;
+  const roomId=document.getElementById("roomIdInput").value;
+  socket.emit("joinRoom",{name,roomId});
+}
+
+function startGame(){
+  socket.emit("startGame",currentRoom);
+}
+
+function startVoting(){
+  socket.emit("startVoting",currentRoom);
+}
+
+function resetGame(){
+  socket.emit("resetGame",currentRoom);
+}
+
+socket.on("roomJoined",({roomId,host})=>{
+  currentRoom=roomId;
+  isHost=host;
+  document.getElementById("setup").style.display="none";
+  document.getElementById("room").style.display="block";
+  document.getElementById("roomIdDisplay").innerText="Room: "+roomId;
+  if(!isHost){
+    document.getElementById("startBtn").style.display="none";
+  }
+});
+
+socket.on("playersUpdate",(players)=>{
+  const container=document.getElementById("players");
+  container.innerHTML="";
+  players.forEach(p=>{
+    const div=document.createElement("div");
+    div.className="player";
+    div.innerText=p.name;
+    container.appendChild(div);
+  });
+});
+
+socket.on("role",(data)=>{
+  document.getElementById("role").style.display="block";
+  if(data.role==="imposter"){
+    document.getElementById("roleText").innerText="أنت Imposter 😈";
+  }else{
+    document.getElementById("roleText").innerText="الكلمة: "+data.word;
+  }
+});
+
+socket.on("phaseUpdate",(phase)=>{
+  document.getElementById("phaseText").innerText="المرحلة: "+phase;
+});
+
+socket.on("gameResult",(data)=>{
+  alert(data.winner);
+});
+
+socket.on("errorMessage",(msg)=>{
+  alert(msg);
+});
+</script>
+
+</body>
+</html>

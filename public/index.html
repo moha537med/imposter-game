@@ -26,7 +26,11 @@
     </div>
 
     <div id="room" style="display:none;">
-        <h3 id="roomIdDisplay"></h3>
+        <div class="room-box">
+            <h3>🔑 Room ID:</h3>
+            <h2 id="roomIdDisplay" style="color: #00ffcc;"></h2>
+            <button onclick="copyRoomId()">📋 نسخ الـ ID</button>
+        </div>
         <h4>اللاعبين:</h4>
         <div id="players"></div>
 
@@ -64,6 +68,14 @@ function joinRoom(){
   socket.emit("joinRoom",{name,roomId});
 }
 
+function copyRoomId() {
+  const roomId = document.getElementById("roomIdDisplay").innerText;
+
+  navigator.clipboard.writeText(roomId);
+
+  alert("تم نسخ Room ID 📋🔥");
+}
+
 function startGame(){
   socket.emit("startGame",currentRoom);
 }
@@ -76,12 +88,15 @@ function resetGame(){
   socket.emit("resetGame",currentRoom);
 }
 
-socket.on("roomJoined", ({roomId, host}) => {
+socket.on("roomJoined", ({ roomId, host }) => {
+
   currentRoom = roomId;
   isHost = host;
 
   document.getElementById("setup").style.display = "none";
   document.getElementById("room").style.display = "block";
+
+  document.getElementById("roomIdDisplay").innerText = roomId;
 
   if(isHost){
     document.getElementById("resetBtn").style.display = "block";

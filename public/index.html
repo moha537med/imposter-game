@@ -32,7 +32,9 @@
 
         <div id="controls">
         <button id="startBtn" onclick="startGame()">ابدأ اللعبة</button>
-        <button onclick="resetGame()">جولة جديدة</button>
+        <button id="resetBtn" onclick="resetGame()" style="display:none;">
+        🔄 جولة جديدة
+        </button>
     </div>
 
 <h3 id="phaseText"></h3>
@@ -74,14 +76,15 @@ function resetGame(){
   socket.emit("resetGame",currentRoom);
 }
 
-socket.on("roomJoined",({roomId,host})=>{
-  currentRoom=roomId;
-  isHost=host;
-  document.getElementById("setup").style.display="none";
-  document.getElementById("room").style.display="block";
-  document.getElementById("roomIdDisplay").innerText="Room: "+roomId;
-  if(!isHost){
-    document.getElementById("startBtn").style.display="none";
+socket.on("roomJoined", ({roomId, host}) => {
+  currentRoom = roomId;
+  isHost = host;
+
+  document.getElementById("setup").style.display = "none";
+  document.getElementById("room").style.display = "block";
+
+  if(isHost){
+    document.getElementById("resetBtn").style.display = "block";
   }
 });
 
@@ -105,8 +108,16 @@ socket.on("role",(data)=>{
   }
 });
 
-socket.on("phaseUpdate",(phase)=>{
-  document.getElementById("phaseText").innerText="المرحلة: "+phase;
+socket.on("phaseUpdate", (phase) => {
+  if(phase === "waiting"){
+    
+    // رجع للـ Setup
+    document.getElementById("room").style.display = "none";
+    document.getElementById("role").style.display = "none";
+    document.getElementById("setup").style.display = "block";
+
+    alert("تم بدء جولة جديدة 🔥");
+  }
 });
 
 socket.on("gameResult",(data)=>{

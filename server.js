@@ -95,20 +95,30 @@ io.on("connection", (socket) => {
     io.to(roomId).emit("playersUpdate", rooms[roomId].players);
   });
 
-  socket.on("joinRoom", ({ name, roomId }) => {
+    socket.on("joinRoom", ({ name, roomId }) => {
+
     const room = rooms[roomId];
-    if (!room) return;
+
+    // ❌ لو الغرفة مش موجودة
+    if (!room) {
+        socket.emit("errorMessage", "❌ Room ID غير صحيح");
+        return;
+    }
 
     socket.join(roomId);
 
     room.players.push({
-      id: socket.id,
-      name
+        id: socket.id,
+        name
     });
 
-    socket.emit("roomJoined", { roomId, host: false });
+    socket.emit("roomJoined", {
+        roomId,
+        host: false
+    });
+
     io.to(roomId).emit("playersUpdate", room.players);
-  });
+    });
 
   socket.on("startGame", (roomId) => {
     const room = rooms[roomId];
